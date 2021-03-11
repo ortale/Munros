@@ -1,7 +1,8 @@
-package com.example.myapplication.controllers;
+package com.example.myapplication.services;
 
 import android.content.Context;
 
+import com.example.myapplication.exceptions.InvalidOrNotFoundFileException;
 import com.example.myapplication.exceptions.InvalidQueryException;
 import com.example.myapplication.models.Hill;
 import com.example.myapplication.util.ErrorMessages;
@@ -10,26 +11,35 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
-import io.reactivex.SingleObserver;
-import io.reactivex.SingleSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-public class HillsController {
-    private static HillsController instance;
+/**
+ * The {@code HillService} class is responsible for receiving data from outside of the library.
+ * The input data can be filtered and should use Enumerators for fields names and so for some values
+ * like hills category and filter sorting.
+ *
+ */
+public class HillService {
+    private static HillService instance;
 
     private Context context;
 
-    public Map<Filters, Object> searchFilter;
-
+    /**
+     * <b>
+     *     {@code FilterCategory}
+     * </b>
+     *
+     * <p>
+     *     Enum contains values to Category filter.
+     * </p>
+     */
     public enum FilterCategory {
         MUN("MUN"),
         MUN_TOP("TOP");
@@ -45,11 +55,32 @@ public class HillsController {
         }
     }
 
+    /**
+     * <b>{@code FilterSort}</b>
+     *
+     * <p>
+     *     Enum contains values to Sort filter.
+     * </p>
+     */
     public enum FilterSort {
         ASC,
         DESC
     }
 
+    /**
+     * <b>{@code Filters}</b>
+     * <p>
+     *      Enum containing fields names.
+     * </p>
+     * <p>
+     *     <b>CATEGORY</b> field to filter hills category
+     *     <b>SORT_HEIGHT</b> field to sort by height and can indicate ascending or descending sort
+     *     <b>SORT_NAME</b> filter to sort by name and can indicate ascending or descending sort
+     *     <b>LIMIT</b> field to filter by limit of rows
+     *     <b>MIN_HEIGHT_M</b> field to filter by minimum height in metres and depends on maximum height
+     *     <b>MAX_HEIGHT_M</b> field to filter by maximum height in metres and depends on minimum height
+     * </p>
+     */
     public enum Filters {
         CATEGORY,
         SORT_HEIGHT,
@@ -59,37 +90,40 @@ public class HillsController {
         MAX_HEIGHT_M
     }
 
-    private HillsController(Context context) {
+    private HillService(Context context) {
         this.context = context;
     }
 
-    public static HillsController getInstance(Context context) {
+    /**
+     * Gets {@code HillService} class instance using singleton.
+     * Needs {@code Context} from the current application context.
+     *
+     * @param context
+     *        Current application context used to access resources.
+     * @return
+     *        A instance of {@code HillService} class using singleton.
+     */
+    public static HillService getInstance(Context context) {
         if (instance == null) {
-            instance = new HillsController(context);
+            instance = new HillService(context);
         }
 
         return instance;
     }
 
-    public void getHillsSortByName(@NonNull SingleObserver<List<Hill>> observer, FilterSort sortName) {
-        try {
-            List<Hill> hills = loadFileData();
-
-            Observable.fromIterable(hills).subscribeOn(Schedulers.computation())
-                    .toSortedList((par1, par2) -> {
-                        if (sortName.equals(FilterSort.ASC)) {
-                            return par1.getHeightInMetres().compareTo(par2.getHeightInMetres());
-                        }
-
-                        return par2.getHeightFeet().compareTo(par1.getHeightFeet());
-                    })
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(observer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Gets hills list and searchFilters in order to generate {@code Observable<Hill>} adding filters
+     * and sorting fields if they exist.
+     *
+     * @param hills
+     *        Contains list of hills retrieved from CSV file.
+     * @param searchFilter
+     *        Contains filter fields and their respective values.
+     * @return
+     *        An {@code Observable<Hill>} containing the necessary filters and sorting fields if they exist.
+     * @throws InvalidQueryException
+     *        In case of any invalid query, this exception is thrown.
+     */
     private Observable<Hill> prepareHillObservable(List<Hill> hills, Map<Filters, Object> searchFilter) throws InvalidQueryException {
         Observable<Hill> observable = null;
 
@@ -180,7 +214,16 @@ public class HillsController {
         return observable;
     }
 
-    public void getHillsAll(@NonNull Observer<Hill> observer, Map<Filters, Object> searchFilter) throws InvalidQueryException {
+    /**
+     * Method used to get all hills data and can assume the provider filters if they exist.
+     *
+     * @param observer
+     *        Callback for this request.
+     * @param searchFilter
+     *        Contains all the suitable filters for the search.
+     * @throws InvalidQueryException
+     */
+    public void getHills(@NonNull Observer<Hill> observer, Map<Filters, Object> searchFilter) throws InvalidQueryException {
         try {
             List<Hill> hills = loadFileData();
 
@@ -192,12 +235,33 @@ public class HillsController {
         }
     }
 
+    /**
+     * Check the last line containing hill information.
+     *
+     * @param line
+     *        Current searching line.
+     * @return
+     *        true for last line and false for not the last line.
+     */
     private boolean isEndOfHills(String[] line) {
         return line[0].isEmpty();
     }
 
+    /**
+     * Loads CSV file data into a list.
+     *
+     * @return
+     *         A list of objects Hill.
+     * @throws IOException
+     *         {@code InvalidOrNotFoundFileException} Exception inherits from {@code IOException} class
+     *         and is used to set a custom message in case if CSV file is not found.
+     */
     private List<Hill> loadFileData() throws IOException {
         InputStreamReader is = new InputStreamReader(context.getAssets().open("munrotab_v6.2.csv"));
+
+        if (is == null) {
+            throw new InvalidOrNotFoundFileException(ErrorMessages.INVALID_CSV_FILE);
+        }
 
         BufferedReader reader = new BufferedReader(is);
         reader.readLine();

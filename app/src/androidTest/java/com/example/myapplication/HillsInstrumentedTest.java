@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
-import com.example.myapplication.controllers.HillsController;
+import com.example.myapplication.services.HillService;
 import com.example.myapplication.exceptions.InvalidQueryException;
 import com.example.myapplication.models.Hill;
 
@@ -36,7 +36,7 @@ import io.reactivex.observers.TestObserver;
 public class HillsInstrumentedTest {
     private final String TAG = HillsInstrumentedTest.class.getSimpleName();
 
-    private HillsController hillsController;
+    private HillService hillService;
 
     private Context context;
 
@@ -57,7 +57,7 @@ public class HillsInstrumentedTest {
 
         context = InstrumentationRegistry.getInstrumentation().getTargetContext().getApplicationContext();
 
-        hillsController = HillsController.getInstance(context);
+        hillService = HillService.getInstance(context);
     }
 
     private Observable<Object> mockedObservableNoErrors() {
@@ -102,13 +102,13 @@ public class HillsInstrumentedTest {
             }
         };
 
-        Map<HillsController.Filters, Object> searchFilter = new HashMap<>();
-        searchFilter.put(HillsController.Filters.CATEGORY, HillsController.FilterCategory.MUN);
-        searchFilter.put(HillsController.Filters.SORT_NAME, HillsController.FilterSort.DESC);
-        searchFilter.put(HillsController.Filters.LIMIT, 10);
+        Map<HillService.Filters, Object> searchFilter = new HashMap<>();
+        searchFilter.put(HillService.Filters.CATEGORY, HillService.FilterCategory.MUN);
+        searchFilter.put(HillService.Filters.SORT_NAME, HillService.FilterSort.DESC);
+        searchFilter.put(HillService.Filters.LIMIT, 10);
 
         try {
-            hillsController.getHillsAll(observer, searchFilter);
+            hillService.getHills(observer, searchFilter);
         } catch (InvalidQueryException e) {
             e.printStackTrace();
         }

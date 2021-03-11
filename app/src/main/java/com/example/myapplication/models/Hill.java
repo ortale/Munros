@@ -1,5 +1,8 @@
 package com.example.myapplication.models;
 
+/**
+ * {@code Hill} class model for hills data.
+ */
 public class Hill {
     private Integer runningNo;
     private Integer doBIHNumber;
