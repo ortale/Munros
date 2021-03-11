@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.example.myapplication.controllers.HillsController;
+import com.example.myapplication.exceptions.InvalidQueryException;
 import com.example.myapplication.models.Hill;
 
 import org.junit.Before;
@@ -17,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.reactivex.Observable;
 import io.reactivex.Observer;
@@ -30,12 +33,14 @@ import io.reactivex.observers.TestObserver;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
-    private final String TAG = ExampleInstrumentedTest.class.getSimpleName();
+public class HillsInstrumentedTest {
+    private final String TAG = HillsInstrumentedTest.class.getSimpleName();
 
     private HillsController hillsController;
 
     private Context context;
+
+    int count = 0;
 
     @Rule
     public TemporaryFolder storageDirectory = new TemporaryFolder();
@@ -71,6 +76,7 @@ public class ExampleInstrumentedTest {
 
     @Test
     public void hillsList_noErrors() {
+        count = 0;
         Observer<Hill> observer = new Observer<Hill>() {
             @Override
             public void onSubscribe(@NonNull Disposable d) {
@@ -79,7 +85,10 @@ public class ExampleInstrumentedTest {
 
             @Override
             public void onNext(@NonNull Hill hill) {
-                Log.v(TAG, "onNext Hill name: " + hill.getName() + " onNext category: " + hill.getYearPost1997());
+                count++;
+                Log.v(TAG, "onNext Hill name: " + hill.getName() + " onNext category: "
+                        + hill.getYearPost1997() + " height: " + hill.getHeightInMetres()
+                        + " count: " + count);
             }
 
             @Override
@@ -93,12 +102,20 @@ public class ExampleInstrumentedTest {
             }
         };
 
-        hillsController.getHills(observer);
+        Map<HillsController.Filters, Object> searchFilter = new HashMap<>();
+        searchFilter.put(HillsController.Filters.CATEGORY, HillsController.FilterCategory.MUN);
+        searchFilter.put(HillsController.Filters.SORT_NAME, HillsController.FilterSort.DESC);
+        searchFilter.put(HillsController.Filters.LIMIT, 10);
+
+        try {
+            hillsController.getHillsAll(observer, searchFilter);
+        } catch (InvalidQueryException e) {
+            e.printStackTrace();
+        }
 
         Observable<Object> obs = mockedObservableNoErrors();
         TestObserver<Object> testObserver = TestObserver.create();
         obs.subscribe(testObserver);
-        testObserver.assertError(Throwable.class);
 
         testObserver.assertSubscribed();
         testObserver.assertNoErrors();
