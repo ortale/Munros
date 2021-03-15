@@ -265,4 +265,9 @@ public class Hill {
     public void setYearPost1997(String yearPost1997) {
         this.yearPost1997 = yearPost1997;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

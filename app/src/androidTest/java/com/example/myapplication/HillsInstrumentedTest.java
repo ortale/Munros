@@ -18,7 +18,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import io.reactivex.Observable;
@@ -60,7 +62,9 @@ public class HillsInstrumentedTest {
         hillService = HillService.getInstance(context);
     }
 
-    private Observable<Object> mockedObservableNoErrors() {
+    private Observable<Object> mockedObservableGetAll() {
+        List<Hill> hills = new ArrayList<>();
+
         Hill hill = new Hill();
 
         hill.setRunningNo(10);
@@ -68,9 +72,179 @@ public class HillsInstrumentedTest {
         hill.setYearPost1997("MUN");
         hill.setGridRef("NN773308");
         hill.setHeightInMetres(3003.0);
+        hills.add(hill);
+
+        hill = new Hill();
+
+        hill.setRunningNo(10);
+        hill.setName("Sgurr na Banachdich");
+        hill.setYearPost1997("MUN");
+        hill.setGridRef("NN773308");
+        hill.setHeightInMetres(3003.0);
+        hills.add(hill);
+
+        hill = new Hill();
+
+        hill.setRunningNo(10);
+        hill.setName("Sgurr na Banachdich");
+        hill.setYearPost1997("MUN");
+        hill.setGridRef("NN773308");
+        hill.setHeightInMetres(3003.0);
+        hills.add(hill);
+
+        hill = new Hill();
+
+        hill.setRunningNo(10);
+        hill.setName("Sgurr na Banachdich");
+        hill.setYearPost1997("MUN");
+        hill.setGridRef("NN773308");
+        hill.setHeightInMetres(3003.0);
+        hills.add(hill);
+
+        hill = new Hill();
+
+        hill.setRunningNo(10);
+        hill.setName("Sgurr na Banachdich");
+        hill.setYearPost1997("MUN");
+        hill.setGridRef("NN773308");
+        hill.setHeightInMetres(3003.0);
+        hills.add(hill);
 
         return Observable.create(e -> {
-            e.onNext(hill);
+            e.onNext(hills);
+        });
+    }
+
+    private Observable<Object> mockedObservableNoCategory() {
+        List<Hill> hills = new ArrayList<>();
+
+        Hill hill1 = new Hill();
+
+        hill1.setRunningNo(10);
+        hill1.setName("Sgurr na Banachdich");
+        hill1.setYearPost1997("MUN");
+        hill1.setGridRef("NN773308");
+        hill1.setHeightInMetres(3003.0);
+        hills.add(hill1);
+
+        Hill hill2 = new Hill();
+
+        hill2.setRunningNo(10);
+        hill2.setName("Sgurr na Banachdich");
+        hill2.setYearPost1997("");
+        hill2.setGridRef("NN773308");
+        hill2.setHeightInMetres(3003.0);
+        hills.add(hill2);
+
+        Hill hill3 = new Hill();
+
+        hill3.setRunningNo(10);
+        hill3.setName("Sgurr na Banachdich");
+        hill3.setYearPost1997("MUN");
+        hill3.setGridRef("NN773308");
+        hill3.setHeightInMetres(3003.0);
+        hills.add(hill3);
+
+        Hill hill4 = new Hill();
+
+        hill4.setRunningNo(10);
+        hill4.setName("Sgurr na Banachdich");
+        hill4.setYearPost1997("MUN");
+        hill4.setGridRef("NN773308");
+        hill4.setHeightInMetres(3003.0);
+        hills.add(hill4);
+
+        Hill hill5 = new Hill();
+
+        hill5.setRunningNo(10);
+        hill5.setName("Sgurr na Banachdich");
+        hill5.setYearPost1997("");
+        hill5.setGridRef("NN773308");
+        hill5.setHeightInMetres(3003.0);
+        hills.add(hill5);
+
+        return Observable.create(e -> {
+            e.onNext(hill1);
+            e.onNext(hill2);
+            e.onNext(hill3);
+            e.onNext(hill4);
+            e.onNext(hill5);
+        });
+    }
+
+    private List<Hill> getHeightAscList() {
+        List<Hill> hills = new ArrayList<>();
+
+        Hill hill1 = new Hill();
+
+        hill1.setRunningNo(10);
+        hill1.setName("Sgurr na Jose");
+        hill1.setYearPost1997("MUN");
+        hill1.setGridRef("NN773308");
+        hill1.setHeightInMetres(3003.0);
+        hills.add(hill1);
+
+        Hill hill2 = new Hill();
+
+        hill2.setRunningNo(11);
+        hill2.setName("Sgurr na Banachdich");
+        hill2.setYearPost1997("");
+        hill2.setGridRef("NN773308");
+        hill2.setHeightInMetres(3001.0);
+//        hills.add(hill2);
+
+        Hill hill3 = new Hill();
+
+        hill3.setRunningNo(12);
+        hill3.setName("Sgurr na Banachdich");
+        hill3.setYearPost1997("MUN");
+        hill3.setGridRef("NN773308");
+        hill3.setHeightInMetres(3008.0);
+//        hills.add(hill3);
+
+        Hill hill4 = new Hill();
+
+        hill4.setRunningNo(13);
+        hill4.setName("Sgurr na Banachdich");
+        hill4.setYearPost1997("MUN");
+        hill4.setGridRef("NN773308");
+        hill4.setHeightInMetres(3013.0);
+//        hills.add(hill4);
+
+        Hill hill5 = new Hill();
+
+        hill5.setRunningNo(14);
+        hill5.setName("Sgurr na Banachdich");
+        hill5.setYearPost1997("");
+        hill5.setGridRef("NN773308");
+        hill5.setHeightInMetres(3077.0);
+//        hills.add(hill5);
+
+        return hills;
+    }
+
+    private Observable<Object> mockedHeightAsc() {
+        List<Hill> hills = getHeightAscList();
+
+        return Observable.create(e -> {
+            e.onNext(hills);
+        });
+    }
+
+    private Observable<Object> mockedFilterCategoryEmpty() {
+        List<Hill> hills = new ArrayList<>();
+
+        Hill hill = new Hill();
+
+        hill.setRunningNo(10);
+        hill.setName("Sgurr na Banachdich");
+        hill.setYearPost1997("MUN");
+        hill.setGridRef("NN773308");
+        hill.setHeightInMetres(3003.0);
+        hills.add(hill);
+
+        return Observable.create(e -> {
+            e.onNext(hills);
         });
     }
 
@@ -113,11 +287,142 @@ public class HillsInstrumentedTest {
             e.printStackTrace();
         }
 
-        Observable<Object> obs = mockedObservableNoErrors();
+        Observable<Object> obs = mockedObservableGetAll();
         TestObserver<Object> testObserver = TestObserver.create();
         obs.subscribe(testObserver);
 
         testObserver.assertSubscribed();
         testObserver.assertNoErrors();
+    }
+
+    @Test
+    public void hillsList_returnsAll() {
+        count = 0;
+        Observer<Hill> observer = new Observer<Hill>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.v(TAG, "onSubscribe");
+            }
+
+            @Override
+            public void onNext(@NonNull Hill hill) {
+                count++;
+                Log.v(TAG, "onNext Hill name: " + hill.getName() + " onNext category: "
+                        + hill.getYearPost1997() + " height: " + hill.getHeightInMetres()
+                        + " count: " + count);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.v(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.v(TAG, "onComplete");
+            }
+        };
+
+        try {
+            hillService.getHills(observer, null);
+        } catch (InvalidQueryException e) {
+            e.printStackTrace();
+        }
+
+        Observable<Object> observable = mockedObservableGetAll();
+        TestObserver<Object> testObserver = TestObserver.create();
+        observable.subscribe(testObserver);
+
+        testObserver.assertValueCount(2);
+    }
+
+    @Test
+    public void hillsList_noCategory() {
+        count = 0;
+        Observer<Hill> observer = new Observer<Hill>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.v(TAG, "onSubscribe");
+            }
+
+            @Override
+            public void onNext(@NonNull Hill hill) {
+                count++;
+                Log.v(TAG, "onNext Hill name: " + hill.getName() + " onNext category: "
+                        + hill.getYearPost1997() + " height: " + hill.getHeightInMetres()
+                        + " count: " + count);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.v(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.v(TAG, "onComplete");
+            }
+        };
+
+        Map<HillService.Filters, Object> searchFilter = new HashMap<>();
+        searchFilter.put(HillService.Filters.LIMIT, 3);
+
+        try {
+            hillService.getHills(observer, searchFilter);
+        } catch (InvalidQueryException e) {
+            e.printStackTrace();
+        }
+
+        Observable<Object> observable = mockedObservableNoCategory();
+        TestObserver<Object> testObserver = TestObserver.create();
+        observable.subscribe(testObserver);
+
+        testObserver.assertValueCount(5);
+    }
+
+    @Test
+    public void hillsList_heightAsc() {
+        count = 0;
+        Observer<Hill> observer = new Observer<Hill>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                Log.v(TAG, "onSubscribe");
+            }
+
+            @Override
+            public void onNext(@NonNull Hill hill) {
+                count++;
+                Log.v(TAG, "onNext Hill name: " + hill.getName() + " onNext category: "
+                        + hill.getYearPost1997() + " height: " + hill.getHeightInMetres()
+                        + " count: " + count);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                Log.v(TAG, "onError: " + e);
+            }
+
+            @Override
+            public void onComplete() {
+                Log.v(TAG, "onComplete");
+            }
+        };
+
+        Map<HillService.Filters, Object> searchFilter = new HashMap<>();
+        searchFilter.put(HillService.Filters.LIMIT, 3);
+
+        try {
+            hillService.getHills(observer, searchFilter);
+        } catch (InvalidQueryException e) {
+            e.printStackTrace();
+        }
+
+        Observable<Object> observable = mockedHeightAsc();
+        TestObserver<Object> testObserver = TestObserver.create();
+        observable.subscribe(testObserver);
+
+        testObserver.assertValue(testObserver.values().get(0));
+
+        testObserver.assertResult(getHeightAscList());
     }
 }
